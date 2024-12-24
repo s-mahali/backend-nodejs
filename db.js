@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 //define the mongoDB connection url
-const mongoURL =  'mongodb://127.0.0.1:27017/mydb'; 
+//const mongoURL =  process.env.DB_LOCAL_URL;
+const mongoURL =  process.env.DB_URL;
 
 // connect to mongoDB
 mongoose.connect(mongoURL);
@@ -11,7 +13,7 @@ mongoose.connect(mongoURL);
 const db = mongoose.connection;
 
 db.on('connected', function() {
-     console.log(`Mongoose default connection open to ${mongoURL}`);
+     console.log(`Mongoose default connection open`);
 });
 
 db.on('disconnected', () => {
