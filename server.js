@@ -2,12 +2,42 @@ const express = require("express");
 const app = express();
 const db = require("./db.js");
 require('dotenv').config();
+const passport = require("./auth.js");
+
+
+
 const PORT = process.env.PORT || 3000;
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
-app.get("/", function (req, res) {
+
+//middleware function
+const logRequest = (req, res, next) => {
+  console.log(`Requested made to : [${new Date().toLocaleDateString()}],${req.url},${req.method}`);
+  next();//move on to the next phase
+}
+//use the middleware
+ app.use(logRequest);
+
+ 
+ app.use(passport.initialize());
+//  const localAuthMiddleware = passport.authenticate("local", {
+//    session: false
+//  })
+
+app.get("/",  function(req, res) {
   res.send("welcome to my hotel, how can i serve you");
+});
+
+const personRoutes = require("./Routes/personRoutes");
+app.use("/person",   personRoutes);
+
+const menuRoutes = require("./Routes/menuRoutes");
+app.use("/menu",  menuRoutes);
+
+
+app.listen(PORT, () => {
+  console.log(`server is running on port ${PORT}`);
 });
 
 // app.post("/person", async (req, res) => {
@@ -71,13 +101,4 @@ app.get("/", function (req, res) {
 // })
 
 //Import the router File
-const personRoutes = require("./Routes/personRoutes");
-app.use("/person", personRoutes);
 
-const menuRoutes = require("./Routes/menuRoutes");
-app.use("/menu", menuRoutes);
-
-
-app.listen(PORT, () => {
-  console.log("server is running on port 3000");
-});
